@@ -1,17 +1,15 @@
 'use client';
 
 import axios from 'axios';
-
+import { useCallback, useEffect, useState } from 'react';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
 
-import { useCallback, useEffect, useState } from 'react';
-import { FieldValues, SubmitErrorHandler, useForm } from 'react-hook-form';
-import { signIn, useSession } from 'next-auth/react';
-
-import Input from '@/app/components/inputs/Input';
+import Input from '../../components/inputs/Input';
 import Button from '@/app/components/Button';
 import AuthSocialButton from './AuthSocialButton';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 type Variant = 'LOGIN' | 'REGISTER';
@@ -48,12 +46,12 @@ const AuthForm = () => {
     },
   });
 
-  const onSubmit: SubmitErrorHandler<FieldValues> = (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
     if (variant === 'REGISTER') {
       axios
-        .post('api/register', data)
+        .post('/api/register', data)
         .then(() => signIn('credentials', data))
         .catch(() => toast.error('Something went wrong!'))
         .finally(() => setIsLoading(false));
@@ -84,7 +82,7 @@ const AuthForm = () => {
     signIn(action, { redirect: false })
       .then((callback) => {
         if (callback?.error) {
-          toast.error('Invalid credentials');
+          toast.error('Invalid Credentials');
         }
 
         if (callback?.ok && !callback?.error) {
@@ -177,7 +175,7 @@ const AuthForm = () => {
           text-gray-500
         "
         >
-          <div>{variant === 'LOGIN' ? 'New to Carita Messenger?' : 'Already have an account?'}</div>
+          <div>{variant === 'LOGIN' ? 'New to Messenger?' : 'Already have an account?'}</div>
           <div onClick={toggleVariant} className="underline cursor-pointer">
             {variant === 'LOGIN' ? 'Create an account' : 'Login'}
           </div>
